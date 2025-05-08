@@ -1,6 +1,11 @@
+from typing import TYPE_CHECKING
+
 from aiogram import Router
 from aiogram.types import Message
 from fluentogram import TranslatorRunner
+
+if TYPE_CHECKING:
+    from locales.stub import TranslatorRunner
 
 # Инициализируем роутер уровня модуля
 other_router = Router()

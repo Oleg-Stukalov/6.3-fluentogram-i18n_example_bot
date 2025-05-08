@@ -4,10 +4,12 @@ import logging
 from aiogram import Bot, Dispatcher
 from aiogram.client.default import DefaultBotProperties
 from aiogram.enums import ParseMode
+from aiogram_dialog import setup_dialogs
 from config_data.config import Config, load_config
+from dialogs.start.dialogs import start_dialog
 from fluentogram import TranslatorHub
+from handlers.commands import commands_router
 from handlers.other import other_router
-from handlers.user import user_router
 from middlewares.i18n import TranslatorRunnerMiddleware
 from utils.i18n import create_translator_hub
 
@@ -39,12 +41,15 @@ async def main() -> None:
     translator_hub: TranslatorHub = create_translator_hub()
 
     # Регистриуем роутеры в диспетчере
-    dp.include_router(user_router)
+    dp.include_router(commands_router)
     dp.include_router(other_router)
+    dp.include_router(start_dialog)
 
     # Регистрируем миддлварь для i18n
     dp.update.middleware(TranslatorRunnerMiddleware())
 
+    # Запускаем функцию настройки проекта для работы с диалогами
+    setup_dialogs(dp)
     # Запускаем polling
     await dp.start_polling(bot, _translator_hub=translator_hub)
 
